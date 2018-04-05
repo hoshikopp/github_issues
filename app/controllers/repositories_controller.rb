@@ -1,21 +1,40 @@
 class RepositoriesController < ApplicationController
+
   def index
-    @repository = Repository.all
+    @repositories = Repository.all.includes(:organisation).eager_load(:issues).order('github_created_at DESC').limit(5)
   end
 
   def search_or_get
-    org = Organisation.where('organisation_name like ?', params[:organisation][:organisation_name])
-    repo = Repository.where('repository_name like ?', params[:repositories][:repository_name])
+    org = Organisation.find_by('organisation_name like ?', params[:organisation][:organisation_name])
+    repos = params[:repository][:repository_name].split(",")
+    repos.each do |repo_name|
+      Repository.find_by('repository_name like ?', repo_name)
+    end
 
-  if repo.present? and repo.organisation = org
+  if Repository.exist_repository?(org, repo)
     @repository = repo
     render :show
-  else get_issues()
+  else
+    issues = Repository.getting_form_remote_server(params[:organisation][:organisation_name],
+                                                   params[:repository][:repository_name])
+    if issues.nil?
+      flash.now[:alert] = "指定されたRepositoryは見つかりませんでした。"
+      @repositories = nil
+      render :index
+    else
+    # Repositoryが存在していた場合
+      org = Organisation.create(organisation_name: params[:organisation][:organisation_name]) if org.nil?
 
+      @repository = org.repositories.create(repository_name: params[:repository][:repository_name])
+      issues.each do |issue|
+        @repository.issues.create(issue)
+      end
+    render :show
+   end
   end
+ end
 
-  end
   def show
+    @repository = Repository.find(params[:id]).eager_load(:issues).order('github_created_at DESC').limit(5)
   end
-
 end

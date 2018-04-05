@@ -2,8 +2,8 @@ require 'net/http'
 require 'uri'
 require 'json'
 
-class GithubIssueAPI
-  def initialize
+class GithubIssueApi
+  def initialize(org, repo)
     @org = org
     @repo = repo
     @api_host = api_host
@@ -11,16 +11,22 @@ class GithubIssueAPI
     call
   end
 
+  def issues
+    return if @results.nil?
+    parse_for_db_saving(@results)
+  end
+
+  private
   def api_host
-    URL.parse("https://api.github.com/")
+    URI.parse("https://api.github.com/")
   end
 
   def endpoint
-    '/repos' + @org + '/' + @repo + '/issues'
+    '/repos/' + @org + '/' + @repo + '/issues'
   end
 
   def call
-    https = Net::HTTP.new(@api_host, @endpoint)
+    https = Net::HTTP.new(@api_host.host, @api_host.port)
     https.use_ssl = true
     response = https.get(@endpoint)
     case response
@@ -29,6 +35,24 @@ class GithubIssueAPI
     else
       @results = nil
     end
+  end
+
+  def result_hash_toarray(result_hash)
+    {
+      github_id: result_hash['id'],
+      title: result_hash['title'].slice(0, 29),
+      body: result_hash['body'].slice(0, 49),
+      html_url: result_hash['html_url'],
+      github_created_at: result_hash['created_at']
+    }
+  end
+
+  def parse_for_db_saving(results)
+    return_array = []
+    results.each do |result|
+      return_array << result_hash_toarray(result)
+    end
+    return_array
   end
 
 
