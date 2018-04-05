@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  repository_name: MyString
+  organisation: one
+
+two:
+  repository_name: MyString
+  organisation: two

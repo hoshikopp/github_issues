@@ -1,0 +1,17 @@
+<h1>Issue検索システム</h1>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 col-sm-6">
+      <%=form_tag '/repositories', method: "post" do %>
+       <div class="name">organisation</div>
+        <%=text_field_tag "organisation[organisation_name]", "", class:"form-control" %>
+        <div class="name">repositories</div>
+        <%=text_field_tag "repositories[repository_name]", "", class:"form-control" %>
+        <%=submit_tag("検索")%>
+      <% end %>
+    </div>
+  </div>
+
+
+</div>
