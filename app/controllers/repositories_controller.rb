@@ -8,7 +8,7 @@ class RepositoriesController < ApplicationController
     org = Organisation.find_by('name like ?', params[:organisation][:name])
     repo = Repository.find_by('name like ?', params[:repository][:name])
 
-    # すでにDBにRepositoryがそんざいしていた場合
+    # すでにDBにRepositoryが存在していた場合
     if Repository.exist_repository?(org, repo)
       @repository = repo
       redirect_to @repository

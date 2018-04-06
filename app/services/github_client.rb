@@ -11,5 +11,4 @@ class GithubClient
   def get_issues
     GithubIssueApi.new(@org, @repo).issues
   end
-
 end
