@@ -1,7 +1,7 @@
 class RepositoriesController < ApplicationController
 
   def index
-    @repositories = Repository.all.includes(:organisation).eager_load(:issues).order('github_created_at DESC').limit(5)
+    @repositories = Repository.all.includes(:organisation)
   end
 
   def search_or_get
@@ -11,8 +11,10 @@ class RepositoriesController < ApplicationController
       Repository.find_by('repository_name like ?', repo_name)
     end
 
-  if Repository.exist_repository?(org, repo)
-    @repository = repo
+  if　repos.each do |repo|
+      Repository.exist_repository?(org, repo)
+     end
+      @repository = repo
     render :show
   else
     issues = Repository.getting_form_remote_server(params[:organisation][:organisation_name],
@@ -32,9 +34,14 @@ class RepositoriesController < ApplicationController
     render :show
    end
   end
- end
 
   def show
-    @repository = Repository.find(params[:id]).eager_load(:issues).order('github_created_at DESC').limit(5)
+    @repository = Repository.find(params[:id])
   end
-end
+
+  def destroy
+    @repository = Repository.find(params[:id])
+    @repository.destroy!
+    redirect_to repositories_path, notice:'削除しました'
+    end
+  end

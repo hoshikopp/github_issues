@@ -5,7 +5,8 @@
   <div class="row">
     <div class="col-md-12 col-sm-6">
       <div class-"repository_name">
-        <h3><%= @repository.repository_name %></h3>
+        <h3><%= @repository&.repository_name %></h3>
+        <%= link_to '削除',repository_path(@repository.id), method: :delete, class:"btn btn-danger",data:{confirm:'本当に削除していいですか？'}  %>
       </div>
       <table class="table table-bordered">
         <thead>
@@ -17,7 +18,7 @@
           </tr>
         </thead>
         <tbody>
-          <% @repository.issues.each do |issue| %>
+          <% @repository.issues.order(github_created_at: :asc).limit(5).each do |issue| %>
             <tr>
               <td><%= issue.title %></td>
               <td><%= issue.body %></td>
