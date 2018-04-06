@@ -1,13 +1,12 @@
-<h1>Issue詳細</h1>
-
 <div class="container">
+  <h1><%= @repository.name %></h1>
   <%= render partial: 'repositories/form'%>
   <div class="row">
     <div class="col-md-12 col-sm-6">
       <div class-"repository_name">
-        <h3><%= @repository.name %></h3>
-        <%= link_to '更新',repository_path(@repository.id), method: :put, class:"btn btn-info" %>
-        <%= link_to '削除',repository_path(@repository.id), method: :delete, class:"btn btn-danger", data: {confirm:'本当に削除していいですか？'}  %>
+        <h3>Issue　詳細</h3>
+        <%= link_to '更新',repository_path(@repository.id), method: :put, class: "btn btn-info btn-space" %>
+        <%= link_to '削除',repository_path(@repository.id), method: :delete, class: "btn btn-danger btn-space", data: { confirm: '本当に削除していいですか？' }  %>
       </div>
       <table class="table table-bordered">
         <thead>
@@ -31,4 +30,5 @@
       </table>
     </div>
   </div>
+  <%= link_to 'トップページへ', repositories_path %>
 </div>

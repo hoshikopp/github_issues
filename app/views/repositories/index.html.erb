@@ -1,38 +1,45 @@
-<h1>Issue検索システム</h1>
-<div class="alert-danger" role="alert">
-  <%= alert %>
-</div>
 <div class="container">
-<%= render partial: 'repositories/form'%>
-<% unless @repositories.nil? %>
-  <% @repositories.each do |repository| %>
+  <h1>Issue検索システム</h1>
+  <div class="alert-danger" role="alert">
+    <%= alert %>
+  </div>
+  <%= render partial: 'repositories/form'%>
+  <% unless @repositories.present? %>
     <div class="row">
-     <div class="col-md-12 col-sm-6">
-       <div class="repository_name">
-         <h3>Org: <%= repository.organisation.name %>  Repository:<%= repository.name%></h3>
-       </div>
-       <table class="table table-bordered">
-         <thead>
-           <tr>
-             <th>title</th>
-             <th>body</th>
-             <th>html_url</th>
-             <th>github_created_at</th>
-           </tr>
-         </thead>
-         <tbody>
-           <% repository.issues.order(github_created_at: :desc).limit(5).each do |issue| %>
-             <tr>
-               <td><%= issue.title %></td>
-               <td><%= issue.body %></td>
-               <td><%= issue.html_url %></td>
-               <td><%= issue.github_created_at %></td>
-             </tr>
-           <% end %>
-         </tbody>
-       </table>
-     </div>
+      <div class="col-md-12 top_information">
+        <h4>システムにRepositoryが存在しません。</h4>
+        <p>検索ボックスからGithubのOrganisationとRepositoryを入力してください。</p>
+      </div>
     </div>
+  <% else %>
+    <% @repositories.each do |repository| %>
+      <div class="row">
+       <div class="col-md-12 col-sm-6">
+         <div class="repository_name">
+           <h3>Org: <%= repository.organisation.name %>  Repository: <%= link_to repository.name, repository %></h3>
+         </div>
+         <table class="table table-bordered">
+           <thead>
+             <tr>
+               <th>title</th>
+               <th>body</th>
+               <th>html_url</th>
+               <th>github_created_at</th>
+             </tr>
+           </thead>
+           <tbody>
+             <% repository.issues.order(github_created_at: :desc).limit(5).each do |issue| %>
+               <tr>
+                 <td><%= issue.title %></td>
+                 <td><%= issue.body %></td>
+                 <td><%= issue.html_url %></td>
+                 <td><%= issue.github_created_at %></td>
+               </tr>
+             <% end %>
+           </tbody>
+         </table>
+       </div>
+      </div>
+    <% end %>
   <% end %>
-<% end %>
 </div>
