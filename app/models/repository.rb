@@ -1,7 +1,7 @@
 class Repository < ApplicationRecord
   belongs_to :organisation
   has_many :issues, dependent: :destroy
-  validates :repository_name, uniqueness: true
+  validates :name, uniqueness: true
 
   def self.exist_repository?(org, repo)
       repo.present? and repo.organisation == org

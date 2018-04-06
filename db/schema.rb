@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180405040250) do
+ActiveRecord::Schema.define(version: 20180406134322) do
 
   create_table "issues", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "issue_name"
+    t.string "name"
     t.integer "github_id"
     t.string "title"
     t.string "body"
@@ -26,13 +26,13 @@ ActiveRecord::Schema.define(version: 20180405040250) do
   end
 
   create_table "organisations", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "organisation_name"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "repositories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string "repository_name"
+    t.string "name"
     t.bigint "organisation_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

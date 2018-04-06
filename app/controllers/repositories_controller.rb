@@ -5,34 +5,42 @@ class RepositoriesController < ApplicationController
   end
 
   def search_or_get
-    org = Organisation.find_by('organisation_name like ?', params[:organisation][:organisation_name])
-    repos = params[:repository][:repository_name].split(",")
-    repos.each do |repo_name|
-      Repository.find_by('repository_name like ?', repo_name)
-    end
+    org = Organisation.find_by('name like ?', params[:organisation][:name])
+    repo = Repository.find_by('name like ?', params[:repository][:name])
 
-  if　repos.each do |repo|
-      Repository.exist_repository?(org, repo)
-     end
+    # すでにDBにRepositoryがそんざいしていた場合
+    if Repository.exist_repository?(org, repo)
       @repository = repo
-    render :show
-  else
-    issues = Repository.getting_form_remote_server(params[:organisation][:organisation_name],
-                                                   params[:repository][:repository_name])
-    if issues.nil?
-      flash.now[:alert] = "指定されたRepositoryは見つかりませんでした。"
-      @repositories = nil
-      render :index
+      redirect_to @repository
     else
-    # Repositoryが存在していた場合
-      org = Organisation.create(organisation_name: params[:organisation][:organisation_name]) if org.nil?
-
-      @repository = org.repositories.create(repository_name: params[:repository][:repository_name])
-      issues.each do |issue|
-        @repository.issues.create(issue)
+      issues = Repository.getting_form_remote_server(params[:organisation][:name],
+                                                     params[:repository][:name])
+      if issues.nil?
+        flash.now[:alert] = "指定されたRepositoryは見つかりませんでした。"
+        @repositories = nil
+        render :index
+      else
+        # Github上にRepositoryが存在していた場合
+        org = Organisation.create(name: params[:organisation][:name]) if org.nil?
+        @repository = org.repositories.create(name: params[:repository][:name])
+        issues.each do |issue|
+          @repository.issues.create(issue)
+        end
+      redirect_to @repository
       end
+    end
+  end
+
+  def update
+    @repository = Repository.find(params[:id])
+    issues = Repository.getting_form_remote_server(@repository.organisation.name, @repository.name)
+    return if issues.nil?
+    issues.each do |issue|
+      #　既に保存されてあるIssueの場合、新規作成しない
+      next if Issue.find_by(github_id: issue[:github_id]).present?
+      @repository.create(issue)
+    end
     render :show
-   end
   end
 
   def show

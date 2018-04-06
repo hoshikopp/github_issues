@@ -1,25 +1,15 @@
 <h1>Issue検索システム</h1>
 <div class="alert-danger" role="alert">
   <%= alert %>
-</div>  
+</div>
 <div class="container">
-  <div class="row">
-    <div class="col-md-12 col-sm-6">
-      <%= form_tag('/repositories/search_or_get', method: :post) do %>
-       <div class="name">organisation</div>
-        <%= text_field_tag "organisation[organisation_name]", "", class:"form-control" %>
-        <div class="name">repositories</div>
-        <%= text_field_tag "repository[repository_name]", "", class:"form-control" %>
-        <%= submit_tag("検索")%>
-      <% end %>
-    </div>
-  </div>
- <% unless @repositories.nil? %>
- <% @repositories.each do |repository| %>
-   <div class="row">
+<%= render partial: 'repositories/form'%>
+<% unless @repositories.nil? %>
+  <% @repositories.each do |repository| %>
+    <div class="row">
      <div class="col-md-12 col-sm-6">
        <div class="repository_name">
-         <h3>Org:<%= repository.organisation.organisation_name %> Repository:<%= repository.repository_name%></h3>
+         <h3>Org: <%= repository.organisation.name %>  Repository:<%= repository.name%></h3>
        </div>
        <table class="table table-bordered">
          <thead>
@@ -31,7 +21,7 @@
            </tr>
          </thead>
          <tbody>
-           <% repository.issues.each do |issue| %>
+           <% repository.issues.order(github_created_at: :desc).limit(5).each do |issue| %>
              <tr>
                <td><%= issue.title %></td>
                <td><%= issue.body %></td>
@@ -42,7 +32,7 @@
          </tbody>
        </table>
      </div>
-   </div>
+    </div>
   <% end %>
- <% end %>
+<% end %>
 </div>
